@@ -48,4 +48,13 @@ router.get('/getentry', function(req, res, next) {
   }
 });
 
+router.get('/getallentries', function(req, res, next) {
+  if (req.query.group === undefined){
+    response = { status : "error", message : "One or more required params not provided for getentry."}
+    res.json(response);
+  }else{
+    database.selectQuery(req, res, "SELECT * FROM coredb.configs WHERE groupname='" + req.query.group + "';");
+  }
+});
+
 module.exports = router;

@@ -27,8 +27,12 @@ var databaseMethods = {
                     res.json({"status" : "error", "message" : "Error while executing select query : " + query + ". Message : " + err.message});
                     return;
                 }
-                else {                    
-                    res.json(rows[0]);
+                else {
+                    if (rows.length == 1){
+                        res.json(rows[0]);
+                    }else{                    
+                        res.json(rows);
+                    }
                 }           
             });
 

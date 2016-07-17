@@ -1,13 +1,7 @@
 var mysql = require('mysql');
+var dbConfig = require("./dbconfig.js");
 
-var pool = mysql.createPool({
-    connectionLimit : 100,
-    host     : 'localhost',
-    user     : 'root',
-    password : 'rats',
-    database : 'coredb',
-    debug    :  false
-});
+var pool = mysql.createPool(dbConfig[process.env.environment]);
 
 var databaseMethods = {
     selectQuery : function (req, res, query) {
@@ -22,7 +16,7 @@ var databaseMethods = {
             }
             
             connection.query(query ,function(err, rows){
-                connection.release();
+                connection.release(); 
                 if (err){
                     res.json({"status" : "error", "message" : "Error while executing select query : " + query + ". Message : " + err.message});
                     return;

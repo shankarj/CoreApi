@@ -1,9 +1,11 @@
 var express = require('express');
 var router = express.Router();
+var database = require('../../database.js');
 
 /* Create a new group */
 router.get('/creategroup', function(req, res, next) {
-  res.end("this is creategroup");
+  console.log(database.getval());
+  res.end(database.getval());
 });
 
 router.get('/deletegroup', function(req, res, next) {
@@ -23,7 +25,7 @@ router.get('/updateentry', function(req, res, next) {
 });
 
 router.get('/getentry', function(req, res, next) {
-  res.end("this is getentry");
+  database.selectQuery(req, res, "SELECT * FROM coredb.configs WHERE keyname='" + req.query.key + "' AND groupname='" + req.query.group + "';");
 });
 
 module.exports = router;

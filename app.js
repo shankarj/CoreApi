@@ -4,12 +4,16 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+
 require('dotenv').config();
 
 var app = express();
 
 // Set the environment
 app.set('env', process.env.environment);
+
+// Connection pool
+global.something = "asdasd";
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

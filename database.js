@@ -2,9 +2,9 @@ var mysql = require('mysql');
 
 var pool = mysql.createPool({
     connectionLimit : 100,
-    host     : 'localhost',
-    user     : 'root',
-    password : 'rats',
+    host     : 'istack.cjwkocq0f3vw.us-west-2.rds.amazonaws.com',
+    user     : 'istack',
+    password : 'neuralnetwork',
     database : 'coredb',
     debug    :  false
 });

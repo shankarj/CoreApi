@@ -13,44 +13,114 @@ var databaseMethods = {
     selectQuery : function (req, res, query) {
         pool.getConnection(function(err,connection){
             if (err) {
-            res.json({"code" : 100, "status" : "Error in connection database"});
-            return;
+                res.json({"status" : "error", "message" : "Error in connection database"});
+                return;
             }   
 
-            console.log('connected as id ' + connection.threadId);
-            console.log(query);
+            if (process.env.environment === "development"){
+                console.log('Connected with ID : ' + connection.threadId);
+            }
+            
             connection.query(query ,function(err, rows){
                 connection.release();
-                if(!err) {                    
+                if (err){
+                    res.json({"status" : "error", "message" : "Error while executing select query : " + query + ". Message : " + err.message});
+                    return;
+                }
+                else {                    
                     res.json(rows[0]);
                 }           
             });
 
             connection.on('error', function(err) {      
-                res.json({"code" : 100, "status" : "Error in connection database"});
+                res.json({"status" : "error", "message" : "Error in connecting to database."});
                 return;     
             });
         });
     },
 
-    insertOrUpdateQuery : function (req, res) {
+    insertQuery : function (req, res, query, row) {
         pool.getConnection(function(err,connection){
             if (err) {
-            res.json({"code" : 100, "status" : "Error in connection database"});
-            return;
+                res.json({"status" : "error", "message" : "Error in connection database"});
+                return;
             }   
 
-            console.log('connected as id ' + connection.threadId);
+            if (process.env.environment === "development"){
+                console.log('Connected with ID : ' + connection.threadId);
+            }
             
-            connection.query("select * from user",function(err,rows){
+            connection.query(query, row, function(err, rows){
                 connection.release();
-                if(!err) {
-                    res.json(rows);
+                if (err){
+                    res.json({"status" : "error", "message" : "Error while executing insert query : " + query + ". Message : " + err.message});
+                    return;
+                }
+                else {                    
+                    res.json(rows[0]);
                 }           
             });
 
             connection.on('error', function(err) {      
-                res.json({"code" : 100, "status" : "Error in connection database"});
+                res.json({"status" : "ok", "message" : ""});
+                return;     
+            });
+        });
+    },
+
+    deleteQuery : function (req, res, query) {
+        pool.getConnection(function(err,connection){
+            if (err) {
+                res.json({"status" : "error", "message" : "Error in connection database"});
+                return;
+            }   
+
+            if (process.env.environment === "development"){
+                console.log('Connected with ID : ' + connection.threadId);
+            }
+            
+            connection.query(query, function(err, rows){
+                connection.release();
+                if (err){
+                    res.json({"status" : "error", "message" : "Error while executing delete query : " + query + ". Message : " + err.message});
+                    return;
+                }
+                else {                    
+                    res.json({"status" : "ok", "message" : ""});
+                }           
+            });
+
+            connection.on('error', function(err) {      
+                res.json({"status" : "error", "message" : "Error in connecting to database."});
+                return;     
+            });
+        });
+    },
+
+    updateQuery : function (req, res, query) {
+        pool.getConnection(function(err,connection){
+            if (err) {
+                res.json({"status" : "error", "message" : "Error in connection database"});
+                return;
+            }   
+
+            if (process.env.environment === "development"){
+                console.log('Connected with ID : ' + connection.threadId);
+            }
+            
+            connection.query(query, function(err, rows){
+                connection.release();
+                if (err){
+                    res.json({"status" : "error", "message" : "Error while executing update query : " + query + ". Message : " + err.message});
+                    return;
+                }
+                else {                    
+                    res.json({"status" : "ok", "message" : ""});
+                }           
+            });
+
+            connection.on('error', function(err) {      
+                res.json({"status" : "error", "message" : "Error in connecting to database."});
                 return;     
             });
         });

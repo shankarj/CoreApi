@@ -12,9 +12,6 @@ var app = express();
 // Set the environment
 app.set('env', process.env.environment);
 
-// Connection pool
-global.something = "asdasd";
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');

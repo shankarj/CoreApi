@@ -1,0 +1,90 @@
+CREATE TABLE `test`.`users` (
+  `user_id` VARCHAR(45) NOT NULL,
+  `first_name` VARCHAR(45) NOT NULL,
+  `last_name` VARCHAR(45) NOT NULL,
+  `email_id` VARCHAR(45) NOT NULL,
+  `phone_number` VARCHAR(45) NULL,
+  PRIMARY KEY (`user_id`));
+
+
+CREATE TABLE `test`.`projects` (
+  `project_id` VARCHAR(16) NOT NULL,
+  `project_name` VARCHAR(45) NOT NULL,
+  `user_id` VARCHAR(45) NOT NULL,
+  `createdtime` DATETIME NULL,
+  `updatedtime` DATETIME NULL,
+  PRIMARY KEY (`project_id`, `project_name`, `user_id`));
+
+ALTER TABLE `test`.`projects` 
+ADD INDEX `user_id_idx` (`user_id` ASC);
+ALTER TABLE `test`.`projects` 
+ADD CONSTRAINT `user_id`
+  FOREIGN KEY (`fk_user_projects`)
+  REFERENCES `test`.`users` (`user_id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+CREATE TABLE `test`.`trainingprofiles` (
+  `profile_id` VARCHAR(45) NOT NULL,
+  `user_id` VARCHAR(45) NOT NULL,
+  `training_type` VARCHAR(45) NULL,
+  `batch_size` INT NULL,
+  `epochs` INT NULL,
+  `created_time` DATETIME NULL,
+  `updated_time` DATETIME NULL,
+  PRIMARY KEY (`profile_id`, `user_id`),
+  INDEX `user_id_idx` (`user_id` ASC),
+  CONSTRAINT `fk_user_training`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `test`.`users` (`user_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+CREATE TABLE `test`.`datasets` (
+  `d_id` VARCHAR(45) NOT NULL,
+  `d_name` VARCHAR(45) NULL,
+  `d_type` VARCHAR(45) NULL,
+  `d_size` INT NULL,
+  `d_location` POINT NULL,
+  `user_id` VARCHAR(45) NULL,
+  `physical_name` VARCHAR(45) NULL,
+  `created_time` DATETIME NULL,
+  `update_time` DATETIME NULL,
+  PRIMARY KEY (`d_id`),
+  INDEX `fk_user_idx` (`user_id` ASC),
+  CONSTRAINT `fk_user_datasets`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `test`.`users` (`user_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+
+CREATE TABLE `test`.`snapshots` (
+  `snapshot_id` VARCHAR(45) NOT NULL,
+  `project_id` VARCHAR(45) NOT NULL,
+  `network_structure` VARCHAR(45) NULL,
+  `network_conns` VARCHAR(45) NULL,
+  `training_profile` VARCHAR(45) NULL,
+  `user_id` VARCHAR(45) NOT NULL,
+  `created_time` DATETIME NULL,
+  `updated_time` DATETIME NULL,
+  PRIMARY KEY (`snapshot_id`, `user_id`, `project_id`),
+  INDEX `fk_project_id_snap_idx` (`project_id` ASC),
+  INDEX `fk_user_id_snap_idx` (`user_id` ASC),
+  INDEX `fk_training_id_snap_idx` (`training_profile` ASC),
+  CONSTRAINT `fk_project_id_snap`
+    FOREIGN KEY (`project_id`)
+    REFERENCES `test`.`projects` (`project_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_user_id_snap`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `test`.`users` (`user_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_training_id_snap`
+    FOREIGN KEY (`training_profile`)
+    REFERENCES `test`.`trainingprofiles` (`profile_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);

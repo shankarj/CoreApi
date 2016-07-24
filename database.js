@@ -37,7 +37,7 @@ var databaseMethods = {
         });
     },
 
-    insertQuery : function (req, res, query, row) {
+    insertQuery : function (req, res, query, row) {        
         pool.getConnection(function(err,connection){
             if (err) {
                 res.json({"status" : "error", "message" : "Error in connection database"});

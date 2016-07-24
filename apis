@@ -1,0 +1,276 @@
+1. Projects:
+
+project_id
+project_name
+user_id
+created_time
+updated_time
+
+Request Type: POST
+/create a project
+
+    Input 
+    2. project_name
+    3. user_id
+    4. Auth_Token
+
+OUTPUT: 
+
+200, Successfully created project_id for user_id, user_name
+
+500, Invalid User Credentials
+500, Project Name too long
+
+Request Type: POST
+/edit a project
+
+    Input 
+    1. project_id
+    2. project_name
+    3. user_id
+    4. Auth_Token
+
+OUTPUT: 
+200, Successfully edited project_id for user_id, user_name
+
+500, Invalid User Credentials
+500, Project Name too long
+    
+Request Type: GET
+/select a project
+
+    Input 
+    1. project_id
+    2. user_id
+    3. Auth_Token
+
+    Input 
+    1. project_name
+    2. user_id
+    3. Auth_Token    
+
+OUTPUT: 
+200, JSON response
+{
+project_id
+project_name
+user_id
+created_time
+updated_time
+}
+
+500, Invalid User Credentials.
+500, Project Details Not Found.
+
+Request Type: DELETE
+/delete a project
+
+    Input 
+    1. project_id
+    2. user_id
+    3. Auth_Token
+
+    Input 
+    1. project_name
+    2. user_id
+    3. Auth_Token    
+
+OUTPUT: 
+200, Successfully edited project_id for user_id, user_name
+
+500, Invalid User Credentials
+500, Project Details Not Found
+
+
+2. Snapshots (Snapshots are instances of a project. A snapshot could be created from a clone of another snapshot also. Think of projects as folders and snapshots are pages in it.)
+
+snapshot_id
+project_id
+network_structure
+network_conns
+training_profile
+user_id
+created_time
+updated_time
+
+Request Type: POST
+/create_snapshot
+
+    Input 
+    1. project_id
+    2. network_structure
+    3. network_conns
+    4. training_profile
+    5. user_id
+    6. auth_token
+
+OUTPUT: 
+200, Successfully created snapshot_id for user_id, user_name
+
+500, Invalid User Credentials
+500, Network Structure Cannot be Empty
+
+
+Request Type: POST
+/edit_snapshot_network_conns
+
+Must Have Parameters
+    Input 
+    1. project_id
+    2. user_id
+    3. Auth_Token
+
+    Input 
+    1. project_name
+    2. user_id
+    3. Auth_Token
+
+Parameter to be edited
+Network conns
+
+OUTPUT: 
+200, Successfully edited project_id for user_id, user_name
+
+500, Invalid User Credentials
+500, Invalid Project Details
+500, Network conns cannot be Empty
+
+
+Request Type: POST
+/edit_snapshot_network_structure
+
+Must Have Parameters
+    Input 
+    1. project_id
+    2. user_id
+    3. Auth_Token
+
+    Input 
+    1. project_name
+    2. user_id
+    3. Auth_Token
+
+Parameter to be edited
+Network Structure
+
+OUTPUT: 
+200, Successfully edited project_id for user_id, user_name
+
+500, Invalid User Credentials
+500, Invalid Project Details
+500, Network Structure cannot be Empty
+
+Request Type: GET
+/snapshots
+
+    Input     
+    1. user_id
+    2. auth_Token
+
+    Input:
+    1. project_id
+    2. user_id
+    3. Auth_Token    
+
+    Input 
+    1. project_name
+    2. user_id
+    3. Auth_Token   
+
+OUTPUT: 
+200, JSON response 
+List of
+[{
+    snapshot_id
+    project_id
+    network_structure
+    network_conns
+    training_profile
+    user_id
+    created_time
+    updated_time
+}]
+
+500, Invalid User Credentials.
+500, Project Details Not Found.
+
+Request Type: GET
+/snapshots/snapshot_id
+
+    Input     
+    1. user_id
+    2. auth_Token
+
+    Input:
+    1. project_id
+    2. user_id
+    3. Auth_Token    
+
+    Input 
+    1. project_name
+    2. user_id
+    3. Auth_Token   
+
+OUTPUT: 
+200, JSON response
+{
+    snapshot_id
+    project_id
+    network_structure
+    network_conns
+    training_profile
+    user_id
+    created_time
+    updated_time
+}
+
+500, Invalid User Credentials.
+500, Project Details Not Found.
+500, IncLIS
+
+Request Type: DELETE
+/delete_snapshot
+
+    Input 
+    1. project_id
+    2. user_id
+    3. Auth_Token
+    4. snap_id
+
+    Input 
+    1. project_name
+    2. user_id
+    3. Auth_Token   
+    4. snap_id 
+
+OUTPUT: 
+200, Successfully edited project_id for user_id, user_name
+
+500, Invalid User Credentials
+500, Project Details Not Found
+
+
+3. Training profiles
+
+profile_id
+user_id
+training_type
+batch_size
+epochs
+created_time
+updated_time
+
+
+4. Datasets
+
+dataset_id
+dataset_name
+type
+size
+location
+physical_name
+user_id
+created_time
+update_time
+
+

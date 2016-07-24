@@ -1,18 +1,19 @@
 var dbConfigs = {
-    development:{
+    production:{
         connectionLimit : 100,
         host     : 'localhost',
         user     : 'root',
         password : 'rats',
         database : 'coredb',
         debug    :  false
-    }, production:{
+    }, development:{
         connectionLimit : 100,
         host     : 'localhost',
         user     : 'root',
-        password : 'rats',
-        database : 'coredb',
-        debug    :  false
+        password : '',
+        database : 'test',
+        debug    :  false,
+        port: 3306
     },
 };
 

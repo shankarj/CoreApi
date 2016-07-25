@@ -24,10 +24,15 @@ router.post('/create_project', function(req, res, next) {
         date_str=created_datetime.toISOString().slice(0, 19).replace('T', ' ');
 
         // Insert in to the database 
-        var row = {project_id: project_id, project_name: p_name, user_id: user_id,createdtime:date_str,updatedtime:date_str};
-        database.insertQuery(req, res, "INSERT INTO test.projects VALUES ?", row);
-        res.json({"project_id":project_id+" succesfully created"});
+        var row = {
+            project_id: project_id, 
+            project_name: p_name, 
+            user_id: user_id,
+            createdtime:date_str,
+            updatedtime:date_str
+        };
 
+        database.insertQuery(req, res, "INSERT INTO test.projects SET ?", row);
     }
 
 });

@@ -24,18 +24,26 @@ router.post('/create_dataset', function(req, res, next) {
         // Auto Generate Profile id:
         d_id = uuid.v1(); 
 
-
         // Created DateTime
         var created_datetime = new Date();
         dateFormat(created_datetime, "yyyy-mm-dd hh:MM:ss");
         date_str=created_datetime.toISOString().slice(0, 19).replace('T', ' ');
 
         // Insert in to the database 
-        var row = {d_id: d_id, d_name: d_name, d_type: d_type, d_size: d_size, d_location: d_location, user_id: user_id, physical_name:physicalname,created_time:date_str,updated_time:date_str};
-        console.log(row);
-        database.insertQuery(req, res, "INSERT INTO test.datasets VALUES ?", row);
-        // res.json({"Dataset_id":d_id+" succesfully created"});
+        var row = {
+            d_id: d_id, 
+            d_name: d_name, 
+            d_type: d_type, 
+            d_size: d_size, 
+            d_location: d_location, 
+            user_id: user_id, 
+            physical_name:physicalname,
+            created_time:date_str,
+            updated_time:date_str
+        };
 
+        console.log(row);   
+        database.insertQuery(req, res, "INSERT INTO test.datasets SET ?", row);
     }
 
 });

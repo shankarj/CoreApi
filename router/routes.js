@@ -15,4 +15,5 @@ module.exports = function(app){
     app.use('/api/deployments', require(apiPath  + "deployments"));
     app.use('/api/datasets', require(apiPath  + "datasets"));
     app.use('/api/projects', require(apiPath  + "projects"));
+    app.use('/api/snapshots', require(apiPath  + "snapshots"));
 }

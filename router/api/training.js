@@ -30,12 +30,30 @@ router.post('/createprofile', function(req, res, next) {
             epochs:epochs
         };
 
-        database.insertQuery(req, res, 'INSERT INTO coredb.trainingprofiles SET ?', row);
+        database.insertQuery(req, res, 'INSERT INTO trainingprofiles SET ?', row);
     }
 });
 
 
-router.post('/editprofile', function(req, res, next) {
+router.post('/editprofile/:id', function(req, res, next) {
+
+    // Get the input which will come as JSON String
+
+    var user_id= req.body.user_id;
+    var auth_token = req.body.auth_token;
+    var profile_id = req.param.id;
+    var row ={};
+    if(validator.validate_project_id(user_id,auth_token,profile_id)){
+        if(req.body.training_type){
+            row.user_id=req.body.training_type;
+        }else if(req.body.batch_size){
+            row.batch_size= req.body.batch_size;
+        }else if(req.body.epochs){
+            row.epochs = req.body.epochs;
+        }   
+
+        database.updateQuery(req, res, "UPDATE test.trainingprofiles SET p_name='" + p_name + "' WHERE project_id='" + p_id + "' AND user_id='" + user_id+ "';");        
+    }
 
 });
 

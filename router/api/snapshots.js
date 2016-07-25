@@ -30,10 +30,17 @@ router.post('/create_snapshot', function(req, res, next) {
         date_str=created_datetime.toISOString().slice(0, 19).replace('T', ' ');
 
         // Insert in to the database 
-        var row = {project_id: project_id, network_structure: network_structure, user_id: user_id,createdtime:date_str,updatedtime:date_str,network_conns:network_conns,training_profile:trainingprofile_id};
-        database.insertQuery(req, res, "INSERT INTO test.snapshots VALUES ?", row);
-        res.json({"snapshot_id":snapshot_id+" succesfully created"});
+        var row = {
+            project_id: project_id,
+            network_structure: network_structure,
+            user_id: user_id,
+            createdtime:date_str,
+            updatedtime:date_str,
+            network_conns:network_conns,
+            training_profile:trainingprofile_id
+        };
 
+        database.insertQuery(req, res, "INSERT INTO test.snapshots SET ?", row);
     }
 
 
@@ -89,9 +96,6 @@ router.get('/snapshots/project/:id', function(req, res, next) {
     }
 
 });
-
-
-
 
 router.delete('/delete_snapshot/:id', function(req, res, next) {
 

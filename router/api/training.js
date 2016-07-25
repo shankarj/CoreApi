@@ -5,45 +5,43 @@ var uuid = require('node-uuid');
 var dateFormat = require('dateformat');
 var database = require('../../database.js');
 
-module.exports = router;
-
-
-router.post('/create_trainingprofile', function(req, res, next) {
+router.post('/createprofile', function(req, res, next) {
+    console.log(req.body);
 
     // Get the input which will come as JSON String
-    user_id= req.body.user_id;
-    auth_token = req.body.auth_token;
-    training_type = req.body.training_type;
-    batch_size = req.body.batch_size;
-    epochs = req.body.epochs;
+    var user_id= req.body.user_id;
+    var auth_token = req.body.auth_token;
+    var training_type = req.body.training_type;
+    var batch_size = req.body.batch_size;
+    var epochs = req.body.epochs;
 
     // Validate the Input
     if(validator.validate_trainingprofile(user_id,auth_token,training_type,batch_size,epochs)){
 
         // Auto Generate Profile id:
-        profile_id = uuid.v1(); 
-
-        // Created DateTime
-        var created_datetime = new Date();
-        dateFormat(created_datetime, "yyyy-mm-dd hh:MM:ss");
-        date_str=created_datetime.toISOString().slice(0, 19).replace('T', ' ');
+        var profile_id = uuid.v1(); 
 
         // Insert in to the database 
-        var row = {profile_id: profile_id, training_type: training_type, user_id: user_id,createdtime:date_str,updatedtime:date_str,batch_size:batch_size,epochs:epochs};
-        database.insertQuery(req, res, "INSERT INTO test.trainingprofiles VALUES ?", row);
-        res.json({"trainingprofile_id":profile_id+" succesfully created"});
+        var row = { 
+            profile_id: profile_id, 
+            training_type: training_type, 
+            user_id: user_id,
+            batch_size:batch_size,
+            epochs:epochs
+        };
 
+        database.insertQuery(req, res, 'INSERT INTO coredb.trainingprofiles SET ?', row);
     }
 });
 
 
-router.post('/edit_trainingprofile', function(req, res, next) {
+router.post('/editprofile', function(req, res, next) {
 
 });
 
 
 
-router.get('/trainingprofiles', function(req, res, next) {
+router.get('/profiles', function(req, res, next) {
 
     // Inputs
     user_id= req.query.user_id;
@@ -57,7 +55,7 @@ router.get('/trainingprofiles', function(req, res, next) {
 });
 
 
-router.get('/trainingprofiles/:id', function(req, res, next) {
+router.get('/profiles/:id', function(req, res, next) {
 
     // Inputs
     user_id= req.query.user_id;
@@ -71,7 +69,7 @@ router.get('/trainingprofiles/:id', function(req, res, next) {
 
 });
 
-router.delete('/delete_trainingprofiles/:id', function(req, res, next) {
+router.delete('/deleteprofiles/:id', function(req, res, next) {
 
     //Inputs
     profile_id = req.params.id;
@@ -89,3 +87,6 @@ router.delete('/delete_trainingprofiles/:id', function(req, res, next) {
 
 
 });
+
+
+module.exports = router;

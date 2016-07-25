@@ -17,7 +17,7 @@ router.get('/createentry', function(req, res, next) {
     res.json(response);
   }else{
     var row = {groupname: req.query.group, keyname: req.query.key, value: req.query.value};
-    database.insertQuery(req, res, "INSERT INTO coredb.configs VALUES ?", row);
+    database.insertQuery(req, res, "INSERT INTO coredb.configs SET ?", row);
   }
 });
 

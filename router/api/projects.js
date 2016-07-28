@@ -48,7 +48,7 @@ router.post('/edit_project/:id', function(req, res, next) {
 
     if(validator.validate_project_id(user_id,auth_token,p_id)){
 
-        database.updateQuery(req, res, "UPDATE test.projects SET p_name='" + p_name + "' WHERE project_id='" + p_id + "' AND user_id='" + user_id+ "';");
+        database.updateQuery(req, res, "UPDATE test.projects SET project_name='" + p_name + "' WHERE project_id='" + p_id + "' AND user_id='" + user_id+ "';");
 
     }
 });

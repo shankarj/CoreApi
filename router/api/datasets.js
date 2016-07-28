@@ -42,16 +42,39 @@ router.post('/create_dataset', function(req, res, next) {
             updated_time:date_str
         };
 
-        console.log(row);   
         database.insertQuery(req, res, "INSERT INTO test.datasets SET ?", row);
     }
 
 });
 
 
-router.post('/edit_dataset', function(req, res, next) {
+router.post('/edit_dataset/:id', function(req, res, next) {
+
+    // Get the input which will come as JSON String
+    var user_id= req.body.user_id;
+    var auth_token = req.body.auth_token;
+    var dataset_id = req.params.id;
+    var set_string="";
+    var where_string="user_id='"+user_id+"'AND dataset_id = '"+ dataset_id +"";
+    if(validator.validate_dataset_id(user_id,auth_token,dataset_id)){
+        if(req.body.dataset_name){
+            set_string+="dataset_name='"+req.body.dataset_name+"'";
+        }else if(req.body.size){
+            set_string+="size='"+req.body.size+"'";
+        }else if(req.body.location){
+            set_string+="location='"+req.body.location+"'";
+        }else if(req.body.physical_name){
+            set_string+="physical_name='"+req.body.physical_name+"'";
+        }
+
+        database.updateQuery(req, res, "UPDATE test.datasets SET "+ set_string +" WHERE "+where_string);
+        
+    }
+
+
 
 });
+
 
 
 router.get('/datasets', function(req, res, next) {
@@ -83,7 +106,6 @@ router.get('/datasets/:id', function(req, res, next) {
 });
 
 router.delete('/delete_dataset/:id', function(req, res, next) {
-
 
     //Inputs
     d_id = req.params.id;

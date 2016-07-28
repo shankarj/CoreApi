@@ -21,13 +21,20 @@ router.post('/createprofile', function(req, res, next) {
         // Auto Generate Profile id:
         var profile_id = uuid.v1(); 
 
+        // Created DateTime
+        var created_datetime = new Date();
+        dateFormat(created_datetime, "yyyy-mm-dd hh:MM:ss");
+        date_str=created_datetime.toISOString().slice(0, 19).replace('T', ' ');
+
         // Insert in to the database 
         var row = { 
             profile_id: profile_id, 
             training_type: training_type, 
             user_id: user_id,
             batch_size:batch_size,
-            epochs:epochs
+            epochs:epochs,
+            created_time:date_str,
+            updated_time:date_str            
         };
 
         database.insertQuery(req, res, 'INSERT INTO trainingprofiles SET ?', row);
@@ -41,18 +48,23 @@ router.post('/editprofile/:id', function(req, res, next) {
 
     var user_id= req.body.user_id;
     var auth_token = req.body.auth_token;
-    var profile_id = req.param.id;
-    var row ={};
+    var profile_id = req.params.id;
+    // var row ={};
+    var set_string="";
+    var where_string="user_id='"+user_id+"' AND profile_id='"+ profile_id+"';";
     if(validator.validate_project_id(user_id,auth_token,profile_id)){
         if(req.body.training_type){
-            row.user_id=req.body.training_type;
+            // row.user_id=req.body.training_type;
+            set_string+="training_type='"+req.body.training_type+"'";
         }else if(req.body.batch_size){
-            row.batch_size= req.body.batch_size;
+            // row.batch_size= req.body.batch_size;
+            set_string+="batch_size='"+req.body.batch_size+"'";
         }else if(req.body.epochs){
-            row.epochs = req.body.epochs;
+            set_string+="epochs='"+req.body.epochs+"'";
         }   
 
-        database.updateQuery(req, res, "UPDATE test.trainingprofiles SET p_name='" + p_name + "' WHERE project_id='" + p_id + "' AND user_id='" + user_id+ "';");        
+        database.updateQuery(req, res, "UPDATE test.trainingprofiles SET "+ set_string +" WHERE "+where_string);
+
     }
 
 });

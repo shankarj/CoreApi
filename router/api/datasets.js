@@ -7,39 +7,39 @@ var database = require('../../database.js');
 module.exports = router;
 
 
-router.post('/create_dataset', function(req, res, next) {
+router.post('/create', function(req, res, next) {
 
     // Get the input which will come as JSON String
-    user_id= req.body.user_id;
-    auth_token = req.body.auth_token;
-    d_name = req.body.d_name;
-    d_type = req.body.d_type;
-    d_size = req.body.d_size;
-    d_location = req.body.d_location;
+    userid= req.body.userid;
+    authtoken = req.body.authtoken;
+    dname = req.body.dname;
+    dtype = req.body.dtype;
+    dsize = req.body.dsize;
+    dlocation = req.body.dlocation;
     physicalname= req.body.physicalname;
 
     // Validate the Input
-    if(validator.validate_datasets(user_id,auth_token,d_name,d_type,d_size,d_location,physicalname)){
+    if(validator.validate_datasets(userid,authtoken,dname,dtype,dsize,dlocation,physicalname)){
 
         // Auto Generate Profile id:
-        d_id = uuid.v1(); 
+        did = uuid.v1(); 
 
         // Created DateTime
-        var created_datetime = new Date();
-        dateFormat(created_datetime, "yyyy-mm-dd hh:MM:ss");
-        date_str=created_datetime.toISOString().slice(0, 19).replace('T', ' ');
+        var createddatetime = new Date();
+        dateFormat(createddatetime, "yyyy-mm-dd hh:MM:ss");
+        date_str=createddatetime.toISOString().slice(0, 19).replace('T', ' ');
 
         // Insert in to the database 
         var row = {
-            d_id: d_id, 
-            d_name: d_name, 
-            d_type: d_type, 
-            d_size: d_size, 
-            d_location: d_location, 
-            user_id: user_id, 
+            did: did, 
+            dname: dname, 
+            dtype: dtype, 
+            dsize: dsize, 
+            dlocation: dlocation, 
+            userid: userid, 
             physical_name:physicalname,
-            created_time:date_str,
-            updated_time:date_str
+            createdtime:date_str,
+            updatedtime:date_str
         };
 
         database.insertQuery(req, res, "INSERT INTO test.datasets SET ?", row);
@@ -48,15 +48,15 @@ router.post('/create_dataset', function(req, res, next) {
 });
 
 
-router.post('/edit_dataset/:id', function(req, res, next) {
+router.post('/edit/:id', function(req, res, next) {
 
     // Get the input which will come as JSON String
-    var user_id= req.body.user_id;
-    var auth_token = req.body.auth_token;
+    var userid= req.body.userid;
+    var authtoken = req.body.authtoken;
     var dataset_id = req.params.id;
     var set_string="";
-    var where_string="user_id='"+user_id+"'AND dataset_id = '"+ dataset_id +"";
-    if(validator.validate_dataset_id(user_id,auth_token,dataset_id)){
+    var where_string="userid='"+userid+"'AND dataset_id = '"+ dataset_id +"";
+    if(validator.validate_dataset_id(userid,authtoken,dataset_id)){
         if(req.body.dataset_name){
             set_string+="dataset_name='"+req.body.dataset_name+"'";
         }else if(req.body.size){
@@ -80,11 +80,11 @@ router.post('/edit_dataset/:id', function(req, res, next) {
 router.get('/datasets', function(req, res, next) {
 
     // Inputs
-    user_id= req.query.user_id;
-    auth_token = req.query.auth_token;
+    userid= req.query.userid;
+    authtoken = req.query.authtoken;
 
-    if(validator.validate_user_auth(user_id,auth_token)){
-        database.selectQuery(req, res, "SELECT * FROM test.datasets WHERE user_id='" + user_id + "';");
+    if(validator.validate_user_auth(userid,authtoken)){
+        database.selectQuery(req, res, "SELECT * FROM test.datasets WHERE userid='" + userid + "';");
     }
 
 
@@ -94,28 +94,28 @@ router.get('/datasets', function(req, res, next) {
 router.get('/datasets/:id', function(req, res, next) {
 
     // Inputs
-    user_id= req.query.user_id;
-    auth_token = req.query.auth_token;
-    d_id = req.params.id;
+    userid= req.query.userid;
+    authtoken = req.query.authtoken;
+    did = req.params.id;
 
-    if(validator.validate_user_auth(user_id,auth_token)){
-        database.selectQuery(req, res, "SELECT * FROM test.datasets WHERE user_id='" + user_id + "' AND d_id='"+d_id+"';");
+    if(validator.validate_user_auth(userid,authtoken)){
+        database.selectQuery(req, res, "SELECT * FROM test.datasets WHERE userid='" + userid + "' AND did='"+did+"';");
     }
 
 
 });
 
-router.delete('/delete_dataset/:id', function(req, res, next) {
+router.delete('/delete/:id', function(req, res, next) {
 
     //Inputs
-    d_id = req.params.id;
-    user_id= req.body.user_id;
-    auth_token = req.body.auth_token;
+    did = req.params.id;
+    userid= req.body.userid;
+    authtoken = req.body.authtoken;
 
     // Validate the Input
-    if(validator.validate_dataset_id(user_id,auth_token,d_id)){
+    if(validator.validate_dataset_id(userid,authtoken,did)){
         // Delete from Database
-        database.deleteQuery(req, res, "DELETE FROM test.datasets WHERE d_id='" + d_id + "' AND user_id='" + user_id+ " and user_id='"+ user_id +"';");
+        database.deleteQuery(req, res, "DELETE FROM test.datasets WHERE did='" + did + "' AND userid='" + userid+ " and userid='"+ userid +"';");
     }
 
 });

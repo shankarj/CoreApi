@@ -7,7 +7,7 @@ var database = require('../../database.js');
 module.exports = router;
 
 
-router.post('/create_snapshot', function(req, res, next) {
+router.post('/create', function(req, res, next) {
 
 
     // Get the input which will come as JSON String
@@ -48,7 +48,7 @@ router.post('/create_snapshot', function(req, res, next) {
 });
 
 
-router.post('/editnetwork/:id', function(req, res, next) {
+router.post('/edit/:id', function(req, res, next) {
 
     // Get the input which will come as JSON String
     var user_id= req.body.user_id;
@@ -114,7 +114,7 @@ router.get('/snapshots/project/:id', function(req, res, next) {
 
 });
 
-router.delete('/delete_snapshot/:id', function(req, res, next) {
+router.delete('/delete/:id', function(req, res, next) {
 
 
     //Inputs

@@ -5,36 +5,36 @@ var uuid = require('node-uuid');
 var dateFormat = require('dateformat');
 var database = require('../../database.js');
 
-router.post('/createprofile', function(req, res, next) {
+router.post('/create', function(req, res, next) {
     console.log(req.body);
 
     // Get the input which will come as JSON String
-    var user_id= req.body.user_id;
-    var auth_token = req.body.auth_token;
-    var training_type = req.body.training_type;
-    var batch_size = req.body.batch_size;
+    var userid= req.body.userid;
+    var authtoken = req.body.authtoken;
+    var trainingtype = req.body.trainingtype;
+    var batchsize = req.body.batchsize;
     var epochs = req.body.epochs;
 
     // Validate the Input
-    if(validator.validate_trainingprofile(user_id,auth_token,training_type,batch_size,epochs)){
+    if(validator.validate_trainingprofile(userid,authtoken,trainingtype,batchsize,epochs)){
 
         // Auto Generate Profile id:
-        var profile_id = uuid.v1(); 
+        var profileid = uuid.v1(); 
 
         // Created DateTime
         var created_datetime = new Date();
         dateFormat(created_datetime, "yyyy-mm-dd hh:MM:ss");
-        date_str=created_datetime.toISOString().slice(0, 19).replace('T', ' ');
+        datestr=created_datetime.toISOString().slice(0, 19).replace('T', ' ');
 
         // Insert in to the database 
         var row = { 
-            profile_id: profile_id, 
-            training_type: training_type, 
-            user_id: user_id,
-            batch_size:batch_size,
+            profileid: profileid, 
+            trainingtype: trainingtype, 
+            userid: userid,
+            batchsize:batchsize,
             epochs:epochs,
-            created_time:date_str,
-            updated_time:date_str            
+            createdtime:datestr,
+            updatedtime:datestr            
         };
 
         database.insertQuery(req, res, 'INSERT INTO trainingprofiles SET ?', row);
@@ -42,23 +42,23 @@ router.post('/createprofile', function(req, res, next) {
 });
 
 
-router.post('/editprofile/:id', function(req, res, next) {
+router.post('/edit/:id', function(req, res, next) {
 
     // Get the input which will come as JSON String
 
-    var user_id= req.body.user_id;
-    var auth_token = req.body.auth_token;
-    var profile_id = req.params.id;
+    var userid= req.body.userid;
+    var authtoken = req.body.authtoken;
+    var profileid = req.params.id;
     // var row ={};
     var set_string="";
-    var where_string="user_id='"+user_id+"' AND profile_id='"+ profile_id+"';";
-    if(validator.validate_project_id(user_id,auth_token,profile_id)){
-        if(req.body.training_type){
-            // row.user_id=req.body.training_type;
-            set_string+="training_type='"+req.body.training_type+"'";
-        }else if(req.body.batch_size){
-            // row.batch_size= req.body.batch_size;
-            set_string+="batch_size='"+req.body.batch_size+"'";
+    var where_string="userid='"+userid+"' AND profileid='"+ profileid+"';";
+    if(validator.validate_trainingprofileid(userid,authtoken,profileid)){
+        if(req.body.trainingtype){
+            // row.userid=req.body.trainingtype;
+            set_string+="trainingtype='"+req.body.trainingtype+"'";
+        }else if(req.body.batchsize){
+            // row.batchsize= req.body.batchsize;
+            set_string+="batchsize='"+req.body.batchsize+"'";
         }else if(req.body.epochs){
             set_string+="epochs='"+req.body.epochs+"'";
         }   
@@ -74,13 +74,12 @@ router.post('/editprofile/:id', function(req, res, next) {
 router.get('/profiles', function(req, res, next) {
 
     // Inputs
-    user_id= req.query.user_id;
-    auth_token = req.query.auth_token;
+    userid= req.query.userid;
+    authtoken = req.query.authtoken;
 
-    if(validator.validate_user_auth(user_id,auth_token)){
-        database.selectQuery(req, res, "SELECT * FROM test.trainingprofiles WHERE user_id='" + user_id + "';");
+    if(validator.validate_user_auth(userid,authtoken)){
+        database.selectQuery(req, res, "SELECT * FROM test.trainingprofiles WHERE userid='" + userid + "';");
     }
-
 
 });
 
@@ -88,33 +87,31 @@ router.get('/profiles', function(req, res, next) {
 router.get('/profiles/:id', function(req, res, next) {
 
     // Inputs
-    user_id= req.query.user_id;
-    auth_token = req.query.auth_token;
-    profile_id=req.params.id;
+    userid= req.query.userid;
+    authtoken = req.query.authtoken;
+    profileid=req.params.id;
 
     // Select Query
-    if(validator.validate_user_auth(user_id,auth_token)){
-        database.selectQuery(req, res, "SELECT * FROM test.trainingprofiles WHERE user_id='" + user_id + "' AND profile_id='"+profile_id+ "';");
+    if(validator.validate_user_auth(userid,authtoken)){
+        database.selectQuery(req, res, "SELECT * FROM test.trainingprofiles WHERE userid='" + userid + "' AND profileid='"+profileid+ "';");
     }
 
 });
 
-router.delete('/deleteprofiles/:id', function(req, res, next) {
+router.delete('/delete/:id', function(req, res, next) {
 
     //Inputs
-    profile_id = req.params.id;
-    user_id= req.body.user_id;
-    auth_token = req.body.auth_token;
+    profileid = req.params.id;
+    userid= req.body.userid;
+    authtoken = req.body.authtoken;
 
     // Validate the Input
-    if(validator.validate_trainingprofile_id(user_id,auth_token,profile_id)){
+    if(validator.validate_trainingprofileid(userid,authtoken,profileid)){
 
         // Delete from Database
-        database.deleteQuery(req, res, "DELETE FROM test.trainingprofiles WHERE profile_id='" + profile_id + "' AND user_id='" + user_id+ "';");
+        database.deleteQuery(req, res, "DELETE FROM test.trainingprofiles WHERE profileid='" + profileid + "' AND userid='" + userid+ "';");
         
     }
-
-
 
 });
 

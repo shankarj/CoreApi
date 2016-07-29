@@ -5,7 +5,7 @@ var uuid = require('node-uuid');
 var dateFormat = require('dateformat');
 var database = require('../../database.js');
 
-router.post('/create_project', function(req, res, next) {
+router.post('/create', function(req, res, next) {
 
     // Inputs
     p_name=req.body.p_name;
@@ -38,7 +38,7 @@ router.post('/create_project', function(req, res, next) {
 });
 
 
-router.post('/edit_project/:id', function(req, res, next) {
+router.post('/edit/:id', function(req, res, next) {
 
     // Inputs
     p_id=req.params.id;
@@ -54,7 +54,7 @@ router.post('/edit_project/:id', function(req, res, next) {
 });
 
 
-router.get('/select_projects', function(req, res, next) {
+router.get('/projects', function(req, res, next) {
 
     // Inputs
     user_id= req.query.user_id;
@@ -66,8 +66,21 @@ router.get('/select_projects', function(req, res, next) {
 
 });
 
+router.get('/projects/:id', function(req, res, next) {
 
-router.delete('/delete_project/:id', function(req, res, next) {
+    // Inputs
+    user_id= req.query.user_id;
+    auth_token = req.query.auth_token;
+    project_id= req.params.id;
+
+    if(validator.validate_user_auth(user_id,auth_token)){
+        database.selectQuery(req, res, "SELECT * FROM test.projects WHERE user_id='" + user_id + "' and project_id = '"+ project_id +"';");
+    }
+
+});
+
+
+router.delete('/delete/:id', function(req, res, next) {
 
     //Inputs
     project_id = req.params.id;

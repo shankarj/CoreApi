@@ -9,7 +9,7 @@ module.exports = function(app){
     app.use('/api/config', require(apiPath  + "config"));
     app.use('/api/elements', require(apiPath  + "elements"));
     app.use('/api/training', require(apiPath  + "training"));
-    
+    app.use('/api/gru', require(apiPath  + "gru"));
     app.use('/api/users', require(apiPath  + "users"));
     app.use('/api/billing', require(apiPath  + "billing"));
     app.use('/api/deployments', require(apiPath  + "deployments"));

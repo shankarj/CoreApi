@@ -9,42 +9,30 @@ module.exports = router;
 
 router.post('/create', function(req, res, next) {
 
-
-    // Get the input which will come as JSON String
-    project_id=req.body.project_id;
-    network_structure= req.body.network_structure;
-    network_conns = req.body.network_conns;
-    trainingprofile_id = req.body.trainingprofile_id;
-    user_id = req.body.user_id;
-    auth_token = req.body.auth_token;
-
     // Validate the Input
-    if(validator.validate_snapshot(user_id,auth_token,project_id,network_structure,network_conns,trainingprofile_id)){
-
+    if(validator.validate_snapshot(req.body)){
         // Auto Generate Snapshot id:
         snapshot_id = uuid.v1(); 
 
-        // Created DateTime
-        var created_datetime = new Date();
-        dateFormat(created_datetime, "yyyy-mm-dd hh:MM:ss");
-        date_str=created_datetime.toISOString().slice(0, 19).replace('T', ' ');
+        // Get network and user id from session id
+        var decodedObj = new Buffer(req.body.sessionid, 'base64');
+        var decodedArr = decodedObj.toString().split("!");
 
-        // Insert in to the database 
+        // Insert into the database 
         var row = {
-            snapshot_id:snapshot_id,
-            project_id: project_id,
-            network_structure: network_structure,
-            user_id: user_id,
-            created_time:date_str,
-            updated_time:date_str,
-            network_conns:network_conns,
-            training_profile:trainingprofile_id
+            project_id: decodedArr[1],
+            project_name: req.body.project_name,
+            snapshot_id: snapshot_id,
+            parent_id: req.body.parent_id,
+            structure_json: JSON.stringify(req.body.network_structure),
+            conns_json: JSON.stringify(req.body.network_conns),
+            owner_id: decodedArr[0]
         };
 
-        database.insertQuery(req, res, "INSERT INTO test.snapshots SET ?", row);
+        database.insertQuery(req, res, "INSERT INTO coredb.projects SET ?", row);
+    }else{
+        res.json({ status : "error", message : "One or more input parameter(s) empty to create a new snapshot."});
     }
-
-
 });
 
 

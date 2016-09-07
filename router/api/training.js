@@ -5,6 +5,10 @@ var uuid = require('node-uuid');
 var dateFormat = require('dateformat');
 var database = require('../../database.js');
 
+router.get('/context', function(req, res, next) {
+
+});
+
 router.post('/create', function(req, res, next) {
     console.log(req.body);
 

@@ -27,7 +27,7 @@ router.post('/lookupmap/create', function(req, res, next) {
     res.json(response);
   }else{
     var row = {session_id: req.body.sessionid, minion_id: req.body.minionid, mode: req.body.mode};
-    database.insertQuery(req, res, "INSERT INTO coredb.lookup_map SET ?", row);
+    database.insertQuery(req, res, "INSERT INTO coredb.lookup_map SET ? ON DUPLICATE KEY UPDATE minion_id = VALUES(minion_id), mode = VALUES(mode);", row);
   }
 });
 

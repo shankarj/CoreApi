@@ -31,29 +31,36 @@ router.post('/create', function(req, res, next) {
 });
 
 
-router.post('/update/:id', function(req, res, next) {
+router.post('/update/:projectid/:snapshotid', function(req, res, next) {
+    if ((genUtils.isEmpty(req.params.projectid)) || (genUtils.isEmpty(req.params.snapshotid))){
+        res.writeHead(404, {'content-type': 'application/json'});
+        res.json({'status': 'error', 'message': 'Invalid PARAMS for update snapshot data. Please refer to the documentation.'});
+    }else{
+        var update_data = {};
 
-    // Get the input which will come as JSON String
-    var user_id= req.body.user_id;
-    var auth_token = req.body.auth_token;
-    var project_id = req.body.project_id;
-    var snapshot_id = req.param.id;
-    var set_string="";
-    var where_string="user_id='"+user_id+"'AND snapshot_id = '"+ snapshot_id +"'+ AND project_id='"+ project_id+"';";
-    if(validator.validate_snapshot_id(user_id,auth_token,project_id)){
-        if(req.body.network_structure){
-            // row.user_id=req.body.training_type;
-            set_string+="network_structure='"+req.body.network_structure+"'";
-        }else if(req.body.network_conns){
-            // row.batch_size= req.body.batch_size;
-            set_string+="network_conns='"+req.body.network_conns+"'";
+        if (!genUtils.isEmpty(req.body.project_name)){
+            update_data["project_name"] = req.body.project_name;
         }
 
-        database.updateQuery(req, res, "UPDATE test.snapshots SET "+ set_string +" WHERE "+where_string);
+        if (!genUtils.isEmpty(req.body.structure_json)){
+            update_data["structure_json"] = JSON.stringify(req.body.structure_json);
+        }
 
+        if (!genUtils.isEmpty(req.body.conns_json)){
+            update_data["conns_json"] = JSON.stringify(req.body.conns_json);
+        }
+
+        if (!genUtils.isEmpty(req.body.settings_json)){
+            update_data["settings_json"] = JSON.stringify(req.body.settings_json);
+        }
+        
+        if (Object.keys(update_data).length >= 1){
+            database.updateQuery(req, res, "UPDATE coredb.projects SET ? WHERE ?", [update_data, {project_id: req.params.id, snapshot_id: req.params.snapshotid}]);
+        }else{
+            res.writeHead(400, {'content-type': 'application/json'});
+            res.json({'status': 'error', 'message': 'Empty POST body for update projects data.'});
+        }
     }
-
-
 });
 
 

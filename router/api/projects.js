@@ -35,7 +35,7 @@ router.post('/create', function(req, res, next) {
 router.post('/update/:id', function(req, res, next) {
     if (genUtils.isEmpty(req.params.id)){
         res.writeHead(404, {'content-type': 'application/json'});
-        res.json({'status': 'error', 'message': 'Invalid POST body for update projects data. Please refer to the documentation.'});
+        res.json({'status': 'error', 'message': 'Invalid PARAMS for update projects data. Please refer to the documentation.'});
     }else{
         var update_data = {};
 
@@ -47,7 +47,7 @@ router.post('/update/:id', function(req, res, next) {
             update_data["structure_json"] = JSON.stringify(req.body.structure_json);
         }
 
-        if (!genUtils.isEmpty(req.body.structure_json)){
+        if (!genUtils.isEmpty(req.body.conns_json)){
             update_data["conns_json"] = JSON.stringify(req.body.conns_json);
         }
 
@@ -56,6 +56,7 @@ router.post('/update/:id', function(req, res, next) {
         }
         
         if (Object.keys(update_data).length >= 1){
+            update_data["snapshot_id"] = "none";
             database.updateQuery(req, res, "UPDATE coredb.projects SET ? WHERE ?", [update_data, {project_id: req.params.id}]);
         }else{
             res.writeHead(400, {'content-type': 'application/json'});

@@ -4,29 +4,24 @@ var validator = require('../../utils/validate.js');
 var uuid = require('node-uuid');
 var dateFormat = require('dateformat');
 var database = require('../../database.js');
-module.exports = router;
-
+var genUtils = require('../../utils/general.js');
 
 router.post('/create', function(req, res, next) {
 
     // Validate the Input
-    if(validator.validate_snapshot(req.body)){
+    if(validator.validate_snapshot_data(req)){
         // Auto Generate Snapshot id:
         snapshot_id = uuid.v1(); 
 
-        // Get network and user id from session id
-        var decodedObj = new Buffer(req.body.sessionid, 'base64');
-        var decodedArr = decodedObj.toString().split("!");
-
         // Insert into the database 
         var row = {
-            project_id: decodedArr[1],
+            project_id: req.body.project_id,
             project_name: req.body.project_name,
             snapshot_id: snapshot_id,
             parent_id: req.body.parent_id,
-            structure_json: JSON.stringify(req.body.network_structure),
-            conns_json: JSON.stringify(req.body.network_conns),
-            owner_id: decodedArr[0]
+            structure_json: genUtils.isEmpty(req.body.structure_json) ? "none" : JSON.stringify(req.body.structure_json),
+            conns_json: genUtils.isEmpty(req.body.conns_json) ? "none" : JSON.stringify(req.body.conns_json),
+            owner_id: req.body.owner_id
         };
 
         database.insertQuery(req, res, "INSERT INTO coredb.projects SET ?", row);
@@ -36,7 +31,7 @@ router.post('/create', function(req, res, next) {
 });
 
 
-router.post('/edit/:id', function(req, res, next) {
+router.post('/update/:id', function(req, res, next) {
 
     // Get the input which will come as JSON String
     var user_id= req.body.user_id;
@@ -119,3 +114,5 @@ router.delete('/delete/:id', function(req, res, next) {
 
 
 });
+
+module.exports = router;

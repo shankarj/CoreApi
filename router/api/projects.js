@@ -34,7 +34,7 @@ router.post('/create', function(req, res, next) {
 
 router.post('/update/:id', function(req, res, next) {
     if (genUtils.isEmpty(req.params.id)){
-        res.writeHead(404, {'content-type': 'application/json'});
+        res.writeHead(400, {'content-type': 'application/json'});
         res.json({'status': 'error', 'message': 'Invalid PARAMS for update projects data. Please refer to the documentation.'});
     }else{
         var update_data = {};
@@ -49,6 +49,10 @@ router.post('/update/:id', function(req, res, next) {
 
         if (!genUtils.isEmpty(req.body.conns_json)){
             update_data["conns_json"] = JSON.stringify(req.body.conns_json);
+        }
+
+        if (!genUtils.isEmpty(req.body.status)){
+            update_data["status"] = req.body.status;
         }
 
         if (!genUtils.isEmpty(req.body.settings_json)){
@@ -66,46 +70,23 @@ router.post('/update/:id', function(req, res, next) {
 });
 
 
-router.get('/projects', function(req, res, next) {
-
-    // Inputs
-    user_id= req.query.user_id;
-    auth_token = req.query.auth_token;
-
-    if(validator.validate_user_auth(user_id,auth_token)){
-        database.selectQuery(req, res, "SELECT * FROM test.projects WHERE user_id='" + user_id + "';");
-    }
-
-});
-
-router.get('/projects/:id', function(req, res, next) {
-
-    // Inputs
-    user_id= req.query.user_id;
-    auth_token = req.query.auth_token;
-    project_id= req.params.id;
-
-    if(validator.validate_user_auth(user_id,auth_token)){
-        database.selectQuery(req, res, "SELECT * FROM test.projects WHERE user_id='" + user_id + "' and project_id = '"+ project_id +"';");
-    }
-
-});
-
-
-router.delete('/delete/:id', function(req, res, next) {
-
-    //Inputs
-    project_id = req.params.id;
-    user_id= req.body.user_id;
-    auth_token = req.body.auth_token;
-
-    // Validate the Input
-    if(validator.validate_project_id(user_id,auth_token,project_id)){
-
-        // Delete from Database
-        database.deleteQuery(req, res, "DELETE FROM test.projects WHERE project_id='" + project_id + "' AND user_id='" + user_id+ "';");
-        
+router.get('/structure/:pid', function(req, res, next) {
+    if (!genUtils.isEmpty(req.params.pid)){
+        database.selectQuery(req, res, "SELECT structure_json, conns_json from coredb.projects where project_id='" + req.params.pid + "';");
+    }else{
+        res.writeHead(400, {'content-type': 'application/json'});
+        res.json({ status : "error", message : "One or more request parameter(s) empty to get project structure details."});
     }
 });
+
+router.get('/settings/:pid', function(req, res, next) {
+    if (!genUtils.isEmpty(req.params.eid)){
+        database.selectQuery(req, res, "SELECT settings_json from coredb.projects where project_id='" + req.params.pid + "';");
+    }else{
+        res.writeHead(400, {'content-type': 'application/json'});
+        res.json({ status : "error", message : "One or more request parameter(s) empty to get project settings."});
+    }
+});
+
 
 module.exports = router;

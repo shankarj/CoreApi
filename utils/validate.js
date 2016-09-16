@@ -20,8 +20,28 @@ var validator_functions= {
         }else{
             return  true;
         }
-    }
-     
+    },
+    validate_elements_data: function validate_snapshot(requestContent) {
+        if ((genUtils.isEmpty(requestContent.body))||
+            (genUtils.isEmpty(requestContent.body.element_id))||
+            (genUtils.isEmpty(requestContent.body.element_name))||
+            (genUtils.isEmpty(requestContent.body.category_name))||
+            (genUtils.isEmpty(requestContent.body.props_json))||
+            (genUtils.isEmpty(requestContent.body.owner_id))){
+                return false;
+        }else{
+            return  true;
+        }
+    },
+    validate_profile_data: function validate_snapshot(requestContent) {
+        if ((genUtils.isEmpty(requestContent.body))||
+            (genUtils.isEmpty(requestContent.body.profile_json))||
+            (genUtils.isEmpty(requestContent.body.owner_id))){
+                return false;
+        }else{
+            return  true;
+        }
+    },    
 }
 
 module.exports= validator_functions;

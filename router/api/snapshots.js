@@ -67,4 +67,14 @@ router.post('/update/:projectid/:snapshotid', function(req, res, next) {
     }
 });
 
+router.get('/details/:pid/:sid', function(req, res, next) {
+    if ((!genUtils.isEmpty(req.params.pid)) || (!genUtils.isEmpty(req.params.sid))){
+        database.selectQuery(req, res, "SELECT * from coredb.projects WHERE project_id='" + req.params.pid + "' AND snapshot_id='" + req.params.sid + "';");
+    }else{
+        res.writeHead(400, {'content-type': 'application/json'});
+        var jsonString = JSON.stringify({ status : "error", message : "One or more request parameter(s) empty to get snapshot details."});
+        res.json(jsonString);
+    }
+});
+
 module.exports = router;

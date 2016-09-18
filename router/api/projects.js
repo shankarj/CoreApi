@@ -70,6 +70,15 @@ router.post('/update/:id', function(req, res, next) {
     }
 });
 
+router.get('/details/:pid', function(req, res, next) {
+    if (!genUtils.isEmpty(req.params.pid)){
+        database.selectQuery(req, res, "SELECT * from coredb.projects where project_id='" + req.params.pid + "';");
+    }else{
+        res.writeHead(400, {'content-type': 'application/json'});
+        var jsonString = JSON.stringify({ status : "error", message : "One or more request parameter(s) empty to get project details."});
+        res.json(jsonString);
+    }
+});
 
 router.get('/structure/:pid', function(req, res, next) {
     if (!genUtils.isEmpty(req.params.pid)){

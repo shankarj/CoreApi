@@ -1,7 +1,7 @@
 var genUtils = require('./general.js');
 
 var validator_functions= {   
-    validate_snapshot_data: function validate_snapshot(requestContent) {
+    validate_snapshot_data: function (requestContent) {
         if ((genUtils.isEmpty(requestContent.body))||
             (genUtils.isEmpty(requestContent.body.parent_id))||
             (genUtils.isEmpty(requestContent.body.project_name))||
@@ -12,7 +12,7 @@ var validator_functions= {
             return  true;
         }
     },
-    validate_project_data: function validate_snapshot(requestContent) {
+    validate_project_data: function (requestContent) {
         if ((genUtils.isEmpty(requestContent.body))||
             (genUtils.isEmpty(requestContent.body.project_name))||
             (genUtils.isEmpty(requestContent.body.owner_id))){
@@ -21,7 +21,7 @@ var validator_functions= {
             return  true;
         }
     },
-    validate_elements_data: function validate_snapshot(requestContent) {
+    validate_elements_data: function (requestContent) {
         if ((genUtils.isEmpty(requestContent.body))||
             (genUtils.isEmpty(requestContent.body.element_id))||
             (genUtils.isEmpty(requestContent.body.element_name))||
@@ -33,7 +33,7 @@ var validator_functions= {
             return  true;
         }
     },
-    validate_profile_data: function validate_snapshot(requestContent) {
+    validate_profile_data: function (requestContent) {
         if ((genUtils.isEmpty(requestContent.body))||
             (genUtils.isEmpty(requestContent.body.profile_json))||
             (genUtils.isEmpty(requestContent.body.owner_id))){
@@ -41,7 +41,17 @@ var validator_functions= {
         }else{
             return  true;
         }
-    },    
+    },
+    validate_session_create: function (requestContent) {
+        if ((genUtils.isEmpty(requestContent.body))||
+            (genUtils.isEmpty(requestContent.body.owner_id))||
+            (genUtils.isEmpty(requestContent.body.project_id))||
+            (genUtils.isEmpty(requestContent.body.snapshot_id))){
+                return false;
+        }else{
+            return  true;
+        }
+    }
 }
 
 module.exports= validator_functions;

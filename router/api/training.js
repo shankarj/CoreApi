@@ -9,6 +9,16 @@ router.get('/start', function (req, res, next) {
 
 });
 
+router.post('/session/create', function (req, res, next) {
+    if (validator.validate_session_create(req)) {
+        var sessionString = req.body.owner_id + "!" + req.body.project_id + "!" + req.body.snapshot_id; 
+        var sessionId = new Buffer(sessionString).toString('base64')
+        res.json({ status: "success", sessionid: sessionId });
+    } else {
+        res.writeHead(400, { 'content-type': 'application/json' });
+        res.json({ status: "error", message: "One or more input parameter(s) empty to create session id." });
+    }
+});
 
 router.post('/profile/create', function (req, res, next) {
     // Validate the Input

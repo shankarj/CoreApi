@@ -27,7 +27,8 @@ router.post('/create', function(req, res, next) {
         database.insertQuery(req, res, "INSERT INTO coredb.elements SET ?", row);
     }else{
         res.writeHead(400, {'content-type': 'application/json'});
-        res.json({ status : "error", message : "One or more input parameter(s) empty to create a new element."});
+        var jsonString = JSON.stringify({ status : "error", message : "One or more input parameter(s) empty to create a new element."});
+        res.json(jsonString);
     }
 
 });
@@ -37,7 +38,8 @@ router.get('/all/:uid', function(req, res, next) {
         database.selectQuery(req, res, "SELECT element_id, element_name, category_name FROM coredb.elements WHERE owner_id in ('admin','" + req.params.uid + "');");
     }else{
         res.writeHead(400, {'content-type': 'application/json'});
-        res.json({ status : "error", message : "One or more request parameter(s) empty to get all elements data."});
+        var jsonString = JSON.stringify({ status : "error", message : "One or more request parameter(s) empty to get all elements data."});
+        res.json(jsonString);
     }
 });
 
@@ -46,7 +48,8 @@ router.get('/details/:eid', function(req, res, next) {
         database.selectQuery(req, res, "SELECT props_json, props_interface_json, description_json from coredb.elements where element_id='" + req.params.eid + "';");
     }else{
         res.writeHead(400, {'content-type': 'application/json'});
-        res.json({ status : "error", message : "One or more request parameter(s) empty to get element details."});
+        var jsonString = JSON.stringify({ status : "error", message : "One or more request parameter(s) empty to get element details."});
+        res.json(jsonString);
     }
 });
 

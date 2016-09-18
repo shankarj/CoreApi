@@ -50,6 +50,10 @@ router.post('/update/:projectid/:snapshotid', function(req, res, next) {
             update_data["conns_json"] = JSON.stringify(req.body.conns_json);
         }
 
+        if (!genUtils.isEmpty(req.body.status)){
+            update_data["status"] = req.body.status;
+        }
+
         if (!genUtils.isEmpty(req.body.settings_json)){
             update_data["settings_json"] = JSON.stringify(req.body.settings_json);
         }
@@ -61,65 +65,6 @@ router.post('/update/:projectid/:snapshotid', function(req, res, next) {
             res.json({'status': 'error', 'message': 'Empty POST body for update projects data.'});
         }
     }
-});
-
-
-router.get('/snapshots', function(req, res, next) {
-
-    // Inputs
-    user_id= req.query.user_id;
-    auth_token = req.query.auth_token;
-
-    if(validator.validate_user_auth(user_id,auth_token)){
-        database.selectQuery(req, res, "SELECT * FROM test.snapshots WHERE user_id='" + user_id + "';");
-    }
-
-});
-
-
-router.get('/snapshots/:id', function(req, res, next) {
-
-    // Inputs
-    user_id= req.query.user_id;
-    auth_token = req.query.auth_token;
-    snapshot_id = req.params.id;
-    if(validator.validate_user_auth(user_id,auth_token)){
-        database.selectQuery(req, res, "SELECT * FROM test.snapshots WHERE user_id='" + user_id + "' AND snapshot_id='"+snapshot_id+"';");
-    }
-
-});
-
-
-
-router.get('/snapshots/project/:id', function(req, res, next) {
-
-
-    // Inputs
-    user_id= req.query.user_id;
-    auth_token = req.query.auth_token;
-    project_id = req.params.id;
-    if(validator.validate_user_auth(user_id,auth_token)){
-        database.selectQuery(req, res, "SELECT * FROM test.snapshots WHERE user_id='" + user_id + "' AND project_id='"+project_id+"';");
-    }
-
-});
-
-router.delete('/delete/:id', function(req, res, next) {
-
-
-    //Inputs
-    snapshot_id = req.params.id;
-    user_id= req.body.user_id;
-    auth_token = req.body.auth_token;
-    project_id =req.body.project_id;
-
-    // Validate the Input
-    if(validator.validate_snapshot_id(user_id,auth_token,project_id,snapshot_id)){
-        // Delete from Database
-        database.deleteQuery(req, res, "DELETE FROM test.snapshots WHERE project_id='" + project_id + "' AND user_id='" + user_id+ "'    and snapshot_id='"+ snapshot_id +"';");
-    }
-
-
 });
 
 module.exports = router;

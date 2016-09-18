@@ -61,7 +61,7 @@ var databaseMethods = {
                         res.end(jsonString);
                     }
                     else {                    
-                        res.json(rows[0]);
+                        res.json({"status" : "success", "message" : "Insert successful."});
                     }           
                 });
 

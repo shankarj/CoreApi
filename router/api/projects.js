@@ -6,36 +6,34 @@ var dateFormat = require('dateformat');
 var database = require('../../database.js');
 var genUtils = require('../../utils/general.js');
 
-router.post('/create', function(req, res, next) {
-    // Validate the Input
-    if(validator.validate_project_data(req)){
-        // Auto Generate Snapshot id:
-        project_id = uuid.v1(); 
+router.get('/', function(req, res, next) {
+    database.selectQuery(req, res, "SELECT project_id, project_name, project_type, created_time, updated_time created_time, updated_time from coredb.projects where snapshot_id='none';");
+});
 
-        // Insert into the database 
-        var row = {
-            project_id: req.body.project_id,
-            project_name: req.body.project_name,
-            snapshot_id: "none",
-            parent_id: genUtils.isEmpty(req.body.parent_id) ? "none" : req.body.parent_id,
-            structure_json: genUtils.isEmpty(req.body.structure_json) ? "none" : JSON.stringify(req.body.structure_json),
-            conns_json: genUtils.isEmpty(req.body.conns_json) ? "none" : JSON.stringify(req.body.conns_json),
-            owner_id: req.body.owner_id
-        };
-
-        database.insertQuery(req, res, "INSERT INTO coredb.projects SET ?", row);
+router.get('/:pid/structure/', function(req, res, next) {
+    if (!genUtils.isEmpty(req.params.pid)){
+        database.selectQuery(req, res, "SELECT structure_json, conns_json from coredb.projects where project_id='" + req.params.pid + "';");
     }else{
         res.writeHead(400, {'content-type': 'application/json'});
-        var jsonString = JSON.stringify({ status : "error", message : "One or more input parameter(s) empty to create a new snapshot."});
-        res.json(jsonString);
+        var jsonString = JSON.stringify({ status : "error", message : "One or more request parameter(s) empty to get project structure details."});
+        res.end(jsonString);
     }
 });
 
-
-router.post('/update/:id', function(req, res, next) {
-    if (genUtils.isEmpty(req.params.id)){
+router.get('/:pid/settings', function(req, res, next) {
+    if (!genUtils.isEmpty(req.params.pid)){
+        database.selectQuery(req, res, "SELECT project_name, settings_json from coredb.projects where project_id='" + req.params.pid + "';");
+    }else{
         res.writeHead(400, {'content-type': 'application/json'});
-        res.json({'status': 'error', 'message': 'Invalid PARAMS for update projects data. Please refer to the documentation.'});
+        var jsonString = JSON.stringify({ status : "error", message : "One or more request parameter(s) empty to get project settings."});
+        res.end(jsonString);
+    }
+});
+
+router.post('/update/:pid/', function(req, res, next) {
+    if (genUtils.isEmpty(req.params.pid)){
+        res.writeHead(400, {'content-type': 'application/json'});
+        res.end({'status': 'error', 'message': 'Invalid PARAMS for update projects data. Please refer to the documentation.'});
     }else{
         var update_data = {};
 
@@ -61,44 +59,41 @@ router.post('/update/:id', function(req, res, next) {
         
         if (Object.keys(update_data).length >= 1){
             update_data["snapshot_id"] = "none";
-            database.updateQuery(req, res, "UPDATE coredb.projects SET ? WHERE ?", [update_data, {project_id: req.params.id}]);
+            database.updateQuery(req, res, "UPDATE coredb.projects SET ? WHERE ?", [update_data, {project_id: req.params.pid}]);
         }else{
             res.writeHead(400, {'content-type': 'application/json'});
             var jsonString = JSON.stringify({'status': 'error', 'message': 'Empty POST body for update projects data.'});
-            res.json(jsonString);
+            res.end(jsonString);
         }
     }
 });
 
-router.get('/details/:pid', function(req, res, next) {
-    if (!genUtils.isEmpty(req.params.pid)){
-        database.selectQuery(req, res, "SELECT * from coredb.projects where project_id='" + req.params.pid + "';");
+router.post('/create', function(req, res, next) {
+    // Validate the Input
+    if(validator.validate_project_data(req)){
+        // Auto Generate Snapshot id:
+        project_id = uuid.v1(); 
+
+        // Insert into the database 
+        var row = {
+            project_id: req.body.project_id,
+            project_name: req.body.project_name,
+            snapshot_id: "none",
+            parent_id: genUtils.isEmpty(req.body.parent_id) ? "none" : req.body.parent_id,
+            structure_json: genUtils.isEmpty(req.body.structure_json) ? "none" : JSON.stringify(req.body.structure_json),
+            conns_json: genUtils.isEmpty(req.body.conns_json) ? "none" : JSON.stringify(req.body.conns_json),
+            owner_id: req.body.owner_id
+        };
+
+        database.insertQuery(req, res, "INSERT INTO coredb.projects SET ?", row);
     }else{
         res.writeHead(400, {'content-type': 'application/json'});
-        var jsonString = JSON.stringify({ status : "error", message : "One or more request parameter(s) empty to get project details."});
-        res.json(jsonString);
+        var jsonString = JSON.stringify({ status : "error", message : "One or more input parameter(s) empty to create a new snapshot."});
+        res.end(jsonString);
     }
 });
 
-router.get('/structure/:pid', function(req, res, next) {
-    if (!genUtils.isEmpty(req.params.pid)){
-        database.selectQuery(req, res, "SELECT structure_json, conns_json from coredb.projects where project_id='" + req.params.pid + "';");
-    }else{
-        res.writeHead(400, {'content-type': 'application/json'});
-        var jsonString = JSON.stringify({ status : "error", message : "One or more request parameter(s) empty to get project structure details."});
-        res.json(jsonString);
-    }
-});
 
-router.get('/settings/:pid', function(req, res, next) {
-    if (!genUtils.isEmpty(req.params.pid)){
-        database.selectQuery(req, res, "SELECT project_name, settings_json from coredb.projects where project_id='" + req.params.pid + "';");
-    }else{
-        res.writeHead(400, {'content-type': 'application/json'});
-        var jsonString = JSON.stringify({ status : "error", message : "One or more request parameter(s) empty to get project settings."});
-        res.json(jsonString);
-    }
-});
 
 
 module.exports = router;

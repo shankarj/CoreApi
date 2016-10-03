@@ -13,10 +13,10 @@ router.post('/sessionid/create', function (req, res, next) {
     if (validator.validate_session_create(req)) {
         var sessionString = req.body.owner_id + "!" + req.body.project_id + "!" + req.body.snapshot_id; 
         var sessionId = new Buffer(sessionString).toString('base64')
-        res.json({ status: "success", sessionid: sessionId });
+        res.end({ status: "success", sessionid: sessionId });
     } else {
         res.writeHead(400, { 'content-type': 'application/json' });
-        res.json({ status: "error", message: "One or more input parameter(s) empty to create session id." });
+        res.end({ status: "error", message: "One or more input parameter(s) empty to create session id." });
     }
 });
 
@@ -36,14 +36,14 @@ router.post('/profile/create', function (req, res, next) {
         database.insertQuery(req, res, "INSERT INTO coredb.training_profile SET ?", row);
     } else {
         res.writeHead(400, { 'content-type': 'application/json' });
-        res.json({ status: "error", message: "One or more input parameter(s) empty to create a new training profile." });
+        res.end({ status: "error", message: "One or more input parameter(s) empty to create a new training profile." });
     }
 });
 
 router.get('/profile/:profid', function (req, res, next) {
     if (genUtils.isEmpty(req.params.profid)) {
         res.writeHead(400, { 'content-type': 'application/json' });
-        res.json({ 'status': 'error', 'message': 'Invalid PARAMS to get training profile.' });
+        res.end({ 'status': 'error', 'message': 'Invalid PARAMS to get training profile.' });
     } else {
         database.selectQuery(req, res, "SELECT profile_json FROM coredb.training_profile WHERE profile_id='" + req.params.profid + ";");
     }
@@ -52,7 +52,7 @@ router.get('/profile/:profid', function (req, res, next) {
 router.get('/profile/delete/:profid', function (req, res, next) {
     if (genUtils.isEmpty(req.params.profid)) {
         res.writeHead(400, { 'content-type': 'application/json' });
-        res.json({ 'status': 'error', 'message': 'Invalid PARAMS to delete training profile.' });
+        res.end({ 'status': 'error', 'message': 'Invalid PARAMS to delete training profile.' });
     } else {
         database.selectQuery(req, res, "DELETE FROM coredb.training_profile WHERE profile_id='" + req.params.profid + ";");
     }

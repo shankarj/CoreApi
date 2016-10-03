@@ -6,6 +6,26 @@ var dateFormat = require('dateformat');
 var database = require('../../database.js');
 var genUtils = require('../../utils/general.js');
 
+router.get('/:sid', function(req, res, next) {
+    if ((!genUtils.isEmpty(req.params.pid)) || (!genUtils.isEmpty(req.params.sid))){
+        database.selectQuery(req, res, "SELECT * from coredb.projects WHERE snapshot_id='" + req.params.sid + "';");
+    }else{
+        res.writeHead(400, {'content-type': 'application/json'});
+        var jsonString = JSON.stringify({ status : "error", message : "One or more request parameter(s) empty to get snapshot details."});
+        res.end(jsonString);
+    }
+});
+
+router.get('/projects/:pid', function(req, res, next) {
+    if ((!genUtils.isEmpty(req.params.pid))){
+        database.selectQuery(req, res, "SELECT snapshot_id, project_name, project_type, parent_id from coredb.projects WHERE project_id='" + req.params.pid + "';");
+    }else{
+        res.writeHead(400, {'content-type': 'application/json'});
+        var jsonString = JSON.stringify({ status : "error", message : "One or more request parameter(s) empty to get snapshot details."});
+        res.end(jsonString);
+    }
+});
+
 router.post('/create', function(req, res, next) {
 
     // Validate the Input
@@ -26,15 +46,15 @@ router.post('/create', function(req, res, next) {
 
         database.insertQuery(req, res, "INSERT INTO coredb.projects SET ?", row);
     }else{
-        res.json({ status : "error", message : "One or more input parameter(s) empty to create a new snapshot."});
+        res.end({ status : "error", message : "One or more input parameter(s) empty to create a new snapshot."});
     }
 });
 
 
-router.post('/update/:projectid/:snapshotid', function(req, res, next) {
-    if ((genUtils.isEmpty(req.params.projectid)) || (genUtils.isEmpty(req.params.snapshotid))){
+router.post('/:snapshotid/update/', function(req, res, next) {
+    if ((genUtils.isEmpty(req.body.projectid)) || (genUtils.isEmpty(req.params.snapshotid))){
         res.writeHead(404, {'content-type': 'application/json'});
-        res.json({'status': 'error', 'message': 'Invalid PARAMS for update snapshot data. Please refer to the documentation.'});
+        res.end({'status': 'error', 'message': 'Invalid PARAMS for update snapshot data. Please refer to the documentation.'});
     }else{
         var update_data = {};
 
@@ -59,22 +79,14 @@ router.post('/update/:projectid/:snapshotid', function(req, res, next) {
         }
         
         if (Object.keys(update_data).length >= 1){
-            database.updateQuery(req, res, "UPDATE coredb.projects SET ? WHERE ?", [update_data, {project_id: req.params.id, snapshot_id: req.params.snapshotid}]);
+            database.updateQuery(req, res, "UPDATE coredb.projects SET ? WHERE ?", [update_data, {project_id: req.body.project_id, snapshot_id: req.params.snapshotid}]);
         }else{
             res.writeHead(400, {'content-type': 'application/json'});
-            res.json({'status': 'error', 'message': 'Empty POST body for update projects data.'});
+            res.end({'status': 'error', 'message': 'Empty POST body for update projects data.'});
         }
     }
 });
 
-router.get('/details/:pid/:sid', function(req, res, next) {
-    if ((!genUtils.isEmpty(req.params.pid)) || (!genUtils.isEmpty(req.params.sid))){
-        database.selectQuery(req, res, "SELECT * from coredb.projects WHERE project_id='" + req.params.pid + "' AND snapshot_id='" + req.params.sid + "';");
-    }else{
-        res.writeHead(400, {'content-type': 'application/json'});
-        var jsonString = JSON.stringify({ status : "error", message : "One or more request parameter(s) empty to get snapshot details."});
-        res.json(jsonString);
-    }
-});
+
 
 module.exports = router;
